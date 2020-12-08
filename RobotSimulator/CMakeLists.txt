@@ -36,6 +36,16 @@ INCLUDE_DIRECTORIES(
   
 link_directories( 
 		${BULLET_PHYSICS_SOURCE_DIR}/src
+		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common
+		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Dynamics
+		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Geometry
+		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL
+		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL_clew
+		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision
+		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletDynamics
+		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletInverseDynamics
+		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletSoftBody
+		${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath
 		${BULLET_PHYSICS_SOURCE_DIR}/examples
 		${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory
 		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs
@@ -57,55 +67,9 @@ link_directories(
   
 LINK_LIBRARIES(BulletRobotics BulletExampleBrowserLib BulletFileLoader BulletWorldImporter BulletSoftBody BulletDynamics BulletCollision BulletInverseDynamicsUtils BulletInverseDynamics LinearMath OpenGLWindow gwen Bullet3Common -ldl)
 
-set(BULLET_PHYSICS_SOURCE_DIR "/home/xianyi/libraries/bullet3")
-include_directories(${BULLET_PHYSICS_SOURCE_DIR}/src)
-link_directories(
-${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common
-${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Dynamics
-${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Geometry
-${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL
-${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL_clew
-${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision
-${BULLET_PHYSICS_SOURCE_DIR}/src/BulletDynamics
-${BULLET_PHYSICS_SOURCE_DIR}/src/BulletInverseDynamics
-${BULLET_PHYSICS_SOURCE_DIR}/src/BulletSoftBody
-${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath
-${BULLET_PHYSICS_SOURCE_DIR}/bin
-)
-
-LINK_LIBRARIES(BulletDynamics BulletCollision LinearMath)
-
-add_definitions     ( ${BULLET_DEFINITIONS} )
-include_directories ( ${BULLET_INCLUDE_DIRS} )
-link_directories    ( ${BULLET_LIBRARY_DIRS} )
-
-
-SET(RobotSimulator_SRCS
-RobotSimulatorMain.cpp
-	b3RobotSimulatorClientAPI.cpp
-	b3RobotSimulatorClientAPI.h	
-	MinitaurSetup.cpp
-	MinitaurSetup.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/InProcessExampleBrowser.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryCommands.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryPublic.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExampleBullet2.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/SharedMemoryInProcessPhysicsC_API.cpp		
-)	
-
-
-
-IF(BUILD_CLSOCKET)
- ADD_DEFINITIONS(-DBT_ENABLE_CLSOCKET)
- ADD_DEFINITIONS(${OSDEF})
-ENDIF(BUILD_CLSOCKET)
+#add_definitions     ( ${BULLET_DEFINITIONS} )
+#include_directories ( ${BULLET_INCLUDE_DIRS} )
+#link_directories    ( ${BULLET_LIBRARY_DIRS} )
 
 
 #some code to support OpenGL and Glew cross platform
@@ -156,16 +120,31 @@ IF(NOT WIN32 AND NOT APPLE)
     ENDIF(BUILD_EGL)
 ENDIF()
 
+SET(RobotSimulator_SRCS
+RobotSimulatorMain.cpp
+	b3RobotSimulatorClientAPI.cpp
+	b3RobotSimulatorClientAPI.h	
+	MinitaurSetup.cpp
+	MinitaurSetup.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/InProcessExampleBrowser.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryCommands.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryPublic.h
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExample.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExampleBullet2.cpp
+	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/SharedMemoryInProcessPhysicsC_API.cpp		
+)	
+
 ADD_EXECUTABLE(App_RobotSimulator  ${RobotSimulator_SRCS})
 
 
 TARGET_LINK_LIBRARIES(App_RobotSimulator BulletRobotics BulletExampleBrowserLib BulletFileLoader BulletWorldImporter BulletSoftBody BulletDynamics BulletCollision BulletInverseDynamicsUtils BulletInverseDynamics LinearMath OpenGLWindow gwen Bullet3Common)
 
-IF(WIN32)
-	IF(BUILD_ENET OR BUILD_CLSOCKET)
-		TARGET_LINK_LIBRARIES(App_RobotSimulator ws2_32 Winmm)
-	ENDIF(BUILD_ENET OR BUILD_CLSOCKET)
-ENDIF(WIN32)
 
 
 
