@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.4.3)
 
 # set the project name
-project(App_HelloBulletRobotics)
+project(App_Collision_Detection)
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m64 -std=gnu++0x")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=gnu++0x")
@@ -9,6 +9,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m64 -std=gnu++0x")
 
 OPTION(BUILD_ENET "Set when you want to build apps with enet UDP networking support" OFF)
 OPTION(BUILD_CLSOCKET "Set when you want to build apps with enet TCP networking support" OFF)
+
 
 set(BULLET_PHYSICS_SOURCE_DIR "/home/xianyi/libraries/bullet3")
 
@@ -118,31 +119,28 @@ IF(NOT WIN32 AND NOT APPLE)
     ENDIF(BUILD_EGL)
 ENDIF()
 
-SET(RobotSimulator_SRCS
-RobotSimulatorMain.cpp
-	b3RobotSimulatorClientAPI.cpp
-	b3RobotSimulatorClientAPI.h	
-	MinitaurSetup.cpp
-	MinitaurSetup.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser/InProcessExampleBrowser.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsServerExample.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsClientExample.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/RemoteGUIHelper.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryCommands.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/GraphicsSharedMemoryPublic.h
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExample.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/PhysicsServerExampleBullet2.cpp
-	${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory/SharedMemoryInProcessPhysicsC_API.cpp		
+SET(CollisionDetection_SRCS
+	CollisionDetectionTest.cpp
+	Bullet2CollisionSdk.cpp
+	Bullet2CollisionSdk.h
+	CollisionSdkC_Api.cpp
+	CollisionSdkC_Api.h
+	CollisionSdkInterface.h
 )	
 
-ADD_EXECUTABLE(App_RobotSimulator  ${RobotSimulator_SRCS})
+#ADD_EXECUTABLE(App_CollisionDetection  ${CollisionDetection_SRCS})
+ADD_EXECUTABLE(App_CollisionDetection  SimpleCollisionDetection.cpp)
 
+if(FALSE) # fake a block comment
 
+SET(CollisionDetection_GUI_SRCS
+	CollisionDetectionTest_GUI.cpp
+	Bullet2CollisionSdk.cpp
+	Bullet2CollisionSdk.h
+	CollisionSdkC_Api.cpp
+	CollisionSdkC_Api.h
+	CollisionSdkInterface.h
+)	
 
-
-
-
-
+ADD_EXECUTABLE(App_CollisionDetection_GUI  ${CollisionDetection_GUI_SRCS})
+endif()
