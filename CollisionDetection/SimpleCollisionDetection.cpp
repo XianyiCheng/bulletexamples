@@ -61,6 +61,7 @@ int main(int argc, char** argv)
     for (int i = 0; i < colliders.size(); i++){
         collisionWorld->addCollisionObject(&colliders[i]);
     }
+    m_app->m_renderer->writeTransforms();
 
     // all contacts in the world
     collisionWorld->performDiscreteCollisionDetection();

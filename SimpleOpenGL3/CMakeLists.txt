@@ -124,7 +124,7 @@ INCLUDE_DIRECTORIES(
 
 
 SET(AppSimpleOpenGL3_SRCS
-	main.cpp
+	main_collision.cpp
 	${BULLET_PHYSICS_SOURCE_DIR}/build3/bullet.rc
 )
 
