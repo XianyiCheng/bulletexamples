@@ -18,6 +18,11 @@ typedef SimpleOpenGL3App SimpleOpenGLApp;
 #include "LinearMath/btAlignedObjectArray.h"
 #include "LinearMath/btAlignedAllocator.h"
 
+#include "math.h"
+#define PI 3.14159265
+
+#define FORCE_CONCAVE_TRIMESH true
+
 static char* gVideoFileName = 0;
 static char* gPngFileName = 0;
 
@@ -139,7 +144,7 @@ int main(int argc, char* argv[])
 
             btVector3 pos(0, 3+0.90, 0);
 			btQuaternion orn(0, 0, 0, 1);
-			btVector4 color(0.7, 0.3, 0.3, 1);
+			btVector4 color(0.7, 0.3, 0.3, 0.9);
 			btVector3 scaling(1, 1, 1);
 
             // create box shape
@@ -161,6 +166,113 @@ int main(int argc, char* argv[])
 			app->m_renderer->registerGraphicsInstance(boxId, pos, orn, color, scaling);
 		}
 
+        // mesh shape
+        {
+            GLInstanceGraphicsShape* glmesh = new GLInstanceGraphicsShape;
+
+            const char* f = "/home/xianyi/libraries/bullet3/data/torus/torus.obj";
+
+            float position[4] = {0, 5.5, 0, 1};
+            //float orn[4] = {0, 0, 0, 1};
+            float a = PI/4;
+            float orn[4] = {sin(a/2), 0, 0, cos(a/2)};
+            float color[4] = {0.3, 0.3, 0.8, 0.9};
+            float scaling[4] = {1, 1, 1, 1};
+
+            b3ImportMeshData meshData;
+            b3BulletDefaultFileIO fileIO;
+            if (b3ImportMeshUtility::loadAndRegisterMeshFromFileInternal(f, meshData, &fileIO))
+            {
+
+                glmesh = meshData.m_gfxShape;
+
+                //apply the geometry scaling
+                for (int i = 0; i < glmesh->m_vertices->size(); i++)
+                {
+                    glmesh->m_vertices->at(i).xyzw[0] *= scaling[0];
+                    glmesh->m_vertices->at(i).xyzw[1] *= scaling[1];
+                    glmesh->m_vertices->at(i).xyzw[2] *= scaling[2];
+                }
+            }
+
+            int textureIndex = -1;
+            int shapeId = -1;
+
+            if (meshData.m_textureImage1)
+            {
+                textureIndex = app->m_renderer->registerTexture(meshData.m_textureImage1, meshData.m_textureWidth, meshData.m_textureHeight);
+            }
+
+            btCollisionShape* collisionShape = 0;
+
+            btAlignedObjectArray<btVector3> convertedVerts;
+            convertedVerts.reserve(glmesh->m_numvertices);
+            for (int i = 0; i < glmesh->m_numvertices; i++)
+            {
+                convertedVerts.push_back(btVector3(
+                    glmesh->m_vertices->at(i).xyzw[0],
+                    glmesh->m_vertices->at(i).xyzw[1],
+                    glmesh->m_vertices->at(i).xyzw[2]));
+            }
+
+            if (FORCE_CONCAVE_TRIMESH)
+            {
+                btTriangleMesh* meshInterface = new btTriangleMesh();
+
+                for (int i = 0; i < glmesh->m_numIndices / 3; i++)
+                {
+                    float* v0 = glmesh->m_vertices->at(glmesh->m_indices->at(i * 3)).xyzw;
+                    float* v1 = glmesh->m_vertices->at(glmesh->m_indices->at(i * 3 + 1)).xyzw;
+                    float* v2 = glmesh->m_vertices->at(glmesh->m_indices->at(i * 3 + 2)).xyzw;
+                    meshInterface->addTriangle(btVector3(v0[0], v0[1], v0[2]),
+                                                btVector3(v1[0], v1[1], v1[2]),
+                                                btVector3(v2[0], v2[1], v2[2]));
+                }
+
+                btBvhTriangleMeshShape* trimesh = new btBvhTriangleMeshShape(meshInterface, true, true);
+                collisionShape = trimesh;
+
+                
+                shapeId = app->m_renderer->registerShape(&(glmesh->m_vertices->at(0).xyzw[0]),
+                                                        glmesh->m_numvertices,
+                                                        &(glmesh->m_indices->at(0)),
+                                                        glmesh->m_numIndices,
+                                                        B3_GL_TRIANGLES,
+                                                        textureIndex);
+
+               
+            }
+            else
+            {
+                btConvexHullShape* convexHull = new btConvexHullShape(&convertedVerts[0].getX(), convertedVerts.size(), sizeof(btVector3));
+                convexHull->optimizeConvexHull();
+                //convexHull->initializePolyhedralFeatures();
+                //convexHull->setMargin(m_data->m_globalDefaults.m_defaultCollisionMargin);
+                collisionShape = convexHull;
+                
+                shapeId = app->m_renderer->registerShape(&(glmesh->m_vertices->at(0).xyzw[0]),
+                                                        glmesh->m_numvertices,
+                                                        &(glmesh->m_indices->at(0)),
+                                                        glmesh->m_numIndices,
+                                                        B3_GL_TRIANGLES,
+                                                        textureIndex);
+            }
+            
+            app->m_renderer->registerGraphicsInstance(shapeId, position, orn, color, scaling);
+
+            // create collision object
+            btCollisionObject* collision_obj = new btCollisionObject;
+            collision_obj->setCollisionShape(collisionShape);
+
+            btTransform tr;
+            tr.setOrigin(btVector3(position[0],position[1],position[2]));
+            tr.setRotation(btQuaternion(orn[0], orn[1], orn[2], orn[3]));
+            collision_obj->setWorldTransform(tr);
+
+            colliders.push_back(*collision_obj);
+        }
+        //
+
         for (int i = 0; i < colliders.size(); i++){
             collisionWorld->addCollisionObject(&colliders[i]);
         }
@@ -179,6 +291,8 @@ int main(int argc, char* argv[])
 
 			app->m_renderer->renderScene();
 
+            // box 2
+
             {
                 float x = 0;
                 float y = 3+0.6+ 0.002*float((frameCount)%300);
@@ -193,6 +307,28 @@ int main(int argc, char* argv[])
                 tr.setRotation(btQuaternion(0, 0, 0, 1));
                 colliders[1].setWorldTransform(tr);
             }
+
+            // torus
+            // COMMENT: bvhtriangle shape cannot move during simulation
+            /*
+            {
+                float x = 0;
+                float y = 6;
+                float z = 0;
+                float pos[3] = {x, y, z};
+
+                //float a = (2*PI/100)*(frameCount%100);
+                float a = PI/2;
+			    float orn[4] = {sin(a/2), 0, 0, cos(a/2)};
+                app->m_renderer->writeSingleInstanceTransformToCPU(pos, orn, 2);
+                
+
+                btTransform tr;
+                tr.setOrigin(btVector3(x,y,z));
+                tr.setRotation(btQuaternion(0, 0, 0, 1));
+                colliders[2].setWorldTransform(tr);
+            }
+            */
 
             app->m_renderer->writeTransforms();
 
