@@ -12,6 +12,7 @@ OPTION(BUILD_CLSOCKET "Set when you want to build apps with enet TCP networking 
 
 
 set(BULLET_PHYSICS_SOURCE_DIR "/home/xianyi/libraries/bullet3")
+set(BULLET_PHYSICS_LIB_DIR "/home/xianyi/libraries/bullet3/build3")
 
 INCLUDE_DIRECTORIES( 
 		${BULLET_PHYSICS_SOURCE_DIR}/src
@@ -35,35 +36,35 @@ INCLUDE_DIRECTORIES(
   )
   
 link_directories( 
-		${BULLET_PHYSICS_SOURCE_DIR}/src
-		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Common
-		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Dynamics
-		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3Geometry
-		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL
-		${BULLET_PHYSICS_SOURCE_DIR}/src/Bullet3OpenCL_clew
-		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletCollision
-		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletDynamics
-		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletInverseDynamics
-		${BULLET_PHYSICS_SOURCE_DIR}/src/BulletSoftBody
-		${BULLET_PHYSICS_SOURCE_DIR}/src/LinearMath
-		${BULLET_PHYSICS_SOURCE_DIR}/examples
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/SharedMemory
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/Gwen
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/enet/include
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/ThirdPartyLibs/clsocket/src
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/CommonInterfaces
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/Utils
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/OpenGLWindow
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/BulletRobotics
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/ExampleBrowser
-		${BULLET_PHYSICS_SOURCE_DIR}/examples/Importers/ImportMeshUtility
-		${BULLET_PHYSICS_SOURCE_DIR}/Extras
-		${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize/BulletFileLoader
-		${BULLET_PHYSICS_SOURCE_DIR}/Extras/Serialize/BulletWorldImporter
-		${BULLET_PHYSICS_SOURCE_DIR}/Extras/InverseDynamics
-		${BULLET_PHYSICS_SOURCE_DIR}/Extras/BulletRobotics
-		${BULLET_PHYSICS_SOURCE_DIR}/bin
+		${BULLET_PHYSICS_LIB_DIR}/src
+		${BULLET_PHYSICS_LIB_DIR}/src/Bullet3Common
+		${BULLET_PHYSICS_LIB_DIR}/src/Bullet3Dynamics
+		${BULLET_PHYSICS_LIB_DIR}/src/Bullet3Geometry
+		${BULLET_PHYSICS_LIB_DIR}/src/Bullet3OpenCL
+		${BULLET_PHYSICS_LIB_DIR}/src/Bullet3OpenCL_clew
+		${BULLET_PHYSICS_LIB_DIR}/src/BulletCollision
+		${BULLET_PHYSICS_LIB_DIR}/src/BulletDynamics
+		${BULLET_PHYSICS_LIB_DIR}/src/BulletInverseDynamics
+		${BULLET_PHYSICS_LIB_DIR}/src/BulletSoftBody
+		${BULLET_PHYSICS_LIB_DIR}/src/LinearMath
+		${BULLET_PHYSICS_LIB_DIR}/examples
+		${BULLET_PHYSICS_LIB_DIR}/examples/SharedMemory
+		${BULLET_PHYSICS_LIB_DIR}/examples/ThirdPartyLibs
+		${BULLET_PHYSICS_LIB_DIR}/examples/ThirdPartyLibs/Gwen
+		${BULLET_PHYSICS_LIB_DIR}/examples/ThirdPartyLibs/enet/include
+		${BULLET_PHYSICS_LIB_DIR}/examples/ThirdPartyLibs/clsocket/src
+		${BULLET_PHYSICS_LIB_DIR}/examples/CommonInterfaces
+		${BULLET_PHYSICS_LIB_DIR}/examples/Utils
+		${BULLET_PHYSICS_LIB_DIR}/examples/OpenGLWindow
+		${BULLET_PHYSICS_LIB_DIR}/examples/BulletRobotics
+		${BULLET_PHYSICS_LIB_DIR}/examples/ExampleBrowser
+		${BULLET_PHYSICS_LIB_DIR}/examples/Importers/ImportMeshUtility
+		${BULLET_PHYSICS_LIB_DIR}/Extras
+		${BULLET_PHYSICS_LIB_DIR}/Extras/Serialize/BulletFileLoader
+		${BULLET_PHYSICS_LIB_DIR}/Extras/Serialize/BulletWorldImporter
+		${BULLET_PHYSICS_LIB_DIR}/Extras/InverseDynamics
+		${BULLET_PHYSICS_LIB_DIR}/Extras/BulletRobotics
+		${BULLET_PHYSICS_LIB_DIR}/bin
   )
   
 
