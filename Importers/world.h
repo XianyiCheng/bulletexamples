@@ -40,7 +40,6 @@ public:
     SimpleOpenGLApp* m_app = 0;
     OpenGLGuiHelper* m_guihelper = 0;
 
-    btMultiBody* mb = 0;
     int object_id = 0;
 
     World();
@@ -59,6 +58,4 @@ public:
     void updateAllColliderGraphics();
     void updateCollisionObjects();
     btCollisionShape* ConvexShapefromMesh(std::string file);
-    void importURDF(const char* fileName);
-    void UpdateURDFTransformations();
 };

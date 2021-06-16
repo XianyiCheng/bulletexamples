@@ -858,3 +858,131 @@ void URDF2BulletMultiBody(
 	}
 	#endif
 }
+
+
+void forwardKinematics_worldtransforms(btMultiBody* mb, btTransform& base_transform, btAlignedObjectArray<btTransform>& link_transforms){
+	btAlignedObjectArray<btQuaternion> world_to_local;
+	btAlignedObjectArray<btVector3> local_origin;
+	mb->forwardKinematics(world_to_local, local_origin);
+
+	world_to_local.resize(mb->getNumLinks() + 1);
+	local_origin.resize(mb->getNumLinks() + 1);
+
+	world_to_local[0] = mb->getWorldToBaseRot();
+	local_origin[0] = mb->getBasePos();
+
+	if (link_transforms.size()!=0){
+		link_transforms.clear();
+	}
+
+	if (mb->getBaseCollider())
+	{
+		btVector3 posr = local_origin[0];
+		//	float pos[4]={posr.x(),posr.y(),posr.z(),1};
+		btScalar quat[4] = {-world_to_local[0].x(), -world_to_local[0].y(), -world_to_local[0].z(), world_to_local[0].w()};
+		btTransform tr;
+		tr.setIdentity();
+		tr.setOrigin(posr);
+		tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+		mb->getBaseCollider()->setWorldTransform(tr);
+        mb->getBaseCollider()->setInterpolationWorldTransform(tr);
+		base_transform = tr;
+	}
+
+		for (int k = 0; k < mb->getNumLinks(); k++)
+	{
+		const int parent = mb->getParent(k);
+		world_to_local[k + 1] = mb->getParentToLocalRot(k) * world_to_local[parent + 1];
+		local_origin[k + 1] = local_origin[parent + 1] + (quatRotate(world_to_local[k + 1].inverse(), mb->getRVector(k)));
+	}
+
+	for (int m = 0; m < mb->getNumLinks(); m++)
+	{
+		btMultiBodyLinkCollider *col = mb->getLink(m).m_collider;
+		if (col)
+		{
+			int link = col->m_link;
+			btAssert(link == m);
+
+			int index = link + 1;
+
+			btVector3 posr = local_origin[index];
+			//			float pos[4]={posr.x(),posr.y(),posr.z(),1};
+			btScalar quat[4] = {-world_to_local[index].x(), -world_to_local[index].y(), -world_to_local[index].z(), world_to_local[index].w()};
+			btTransform tr;
+			tr.setIdentity();
+			tr.setOrigin(posr);
+			tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+			col->setWorldTransform(tr);
+            col->setInterpolationWorldTransform(tr);
+			link_transforms.push_back(tr);
+		}
+	}
+
+}
+
+void forwardKinematics_worldtransforms(btMultiBody* mb, btAlignedObjectArray<btTransform>& worldtransforms){
+	
+	btAlignedObjectArray<btQuaternion> world_to_local;
+	btAlignedObjectArray<btVector3> local_origin;
+	mb->forwardKinematics(world_to_local, local_origin);
+
+	world_to_local.resize(mb->getNumLinks() + 1);
+	local_origin.resize(mb->getNumLinks() + 1);
+
+	world_to_local[0] = mb->getWorldToBaseRot();
+	local_origin[0] = mb->getBasePos();
+
+	if (worldtransforms.size()!=0){
+		worldtransforms.clear();
+	}
+
+	if (mb->getBaseCollider())
+	{
+		btVector3 posr = local_origin[0];
+		//	float pos[4]={posr.x(),posr.y(),posr.z(),1};
+		btScalar quat[4] = {-world_to_local[0].x(), -world_to_local[0].y(), -world_to_local[0].z(), world_to_local[0].w()};
+		btTransform tr;
+		tr.setIdentity();
+		tr.setOrigin(posr);
+		tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+		mb->getBaseCollider()->setWorldTransform(tr);
+        mb->getBaseCollider()->setInterpolationWorldTransform(tr);
+		worldtransforms.push_back(tr);
+	}
+
+		for (int k = 0; k < mb->getNumLinks(); k++)
+	{
+		const int parent = mb->getParent(k);
+		world_to_local[k + 1] = mb->getParentToLocalRot(k) * world_to_local[parent + 1];
+		local_origin[k + 1] = local_origin[parent + 1] + (quatRotate(world_to_local[k + 1].inverse(), mb->getRVector(k)));
+	}
+
+	for (int m = 0; m < mb->getNumLinks(); m++)
+	{
+		btMultiBodyLinkCollider *col = mb->getLink(m).m_collider;
+		if (col)
+		{
+			int link = col->m_link;
+			btAssert(link == m);
+
+			int index = link + 1;
+
+			btVector3 posr = local_origin[index];
+			//			float pos[4]={posr.x(),posr.y(),posr.z(),1};
+			btScalar quat[4] = {-world_to_local[index].x(), -world_to_local[index].y(), -world_to_local[index].z(), world_to_local[index].w()};
+			btTransform tr;
+			tr.setIdentity();
+			tr.setOrigin(posr);
+			tr.setRotation(btQuaternion(quat[0], quat[1], quat[2], quat[3]));
+
+			col->setWorldTransform(tr);
+            col->setInterpolationWorldTransform(tr);
+			worldtransforms.push_back(tr);
+		}
+	}
+
+}

@@ -119,7 +119,7 @@ ENDIF()
 
 
 SET(AppImporters_SRCS
-	test_world.cpp world.cpp URDF2btMultiBody.cpp
+	test_world.cpp world.cpp URDF2btMultiBody.cpp robot.cpp
 )
 
 LINK_LIBRARIES(

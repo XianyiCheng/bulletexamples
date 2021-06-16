@@ -1,4 +1,6 @@
 #include "world.h"
+#include "URDF2btMultiBody.h"
+#include "robot.h"
 
 int main() {
 
@@ -33,7 +35,7 @@ int main() {
 
         // w.colliders.push_back(*box_collision_obj);
 
-        // w.addCollisionObject(box_collision_obj);
+        w.addCollisionObject(box_collision_obj);
     }
 
     
@@ -57,14 +59,20 @@ int main() {
         tr.setRotation(orn);
         box_collision_obj->setWorldTransform(tr);
 
-        // w.addCollisionObject(box_collision_obj);
+        w.addCollisionObject(box_collision_obj);
     }
 
-    w.importURDF("/home/xianyi/libraries/bullet3/data/humanoid.urdf");
+    // w.importURDF("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf");
 
     w.updateCollisionObjects();
     
     w.updateCollisionObjectGraphics();
+
+    Robot kuka_robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf", w.m_guihelper, 10);
+
+    kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 0, 0)));
+
+    double p[] = {0,0,0,0,0,0,0};
 
     // try render
     do
@@ -87,16 +95,12 @@ int main() {
         // }
 
         {
-
-            for (int i = 0; i < w.mb->getNumLinks(); i++){
-                w.mb->setJointPos(i, 0.002*float((frameCount)%300));
+            for (int i = 0; i < kuka_robot.mb->getNumLinks()+1; i++){
+                p[i] = 0.002*float((frameCount)%600);
             }
 
-            btAlignedObjectArray<btQuaternion> scratch_q;
-		    btAlignedObjectArray<btVector3> scratch_m;
-		    w.mb->forwardKinematics(scratch_q, scratch_m);
-            w.mb->updateCollisionObjectWorldTransforms(scratch_q, scratch_m);
-
+            kuka_robot.setJointPositions(p);
+            kuka_robot.updateGraphics(w.m_app);
         }
 
 

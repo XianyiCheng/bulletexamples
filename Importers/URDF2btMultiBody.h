@@ -31,3 +31,7 @@ void URDF2BulletMultiBody(const URDFImporterInterface& u2b,
 						UrdfVisualShapeCache* cachedLinkGraphicsShapes = 0);
 
 #endif  //_URDF2BULLET_H
+
+void forwardKinematics_worldtransforms(btMultiBody* mb, btAlignedObjectArray<btTransform>& worldtransforms);
+
+void forwardKinematics_worldtransforms(btMultiBody* mb, btTransform& base_transform, btAlignedObjectArray<btTransform>& link_transforms);
