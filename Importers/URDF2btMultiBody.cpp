@@ -203,8 +203,7 @@ btTransform URDF2BulletMultiBodyInternal(
 	bool createMultiBody, const char* pathPrefix,
 	int flags, UrdfVisualShapeCache* cachedLinkGraphicsShapesIn, UrdfVisualShapeCache* cachedLinkGraphicsShapesOut, bool recursive)
 {
-	B3_PROFILE("URDF2BulletMultiBodyInternal2");
-	//b3Printf("start converting/extracting data from URDF interface\n");
+	
 
 	btTransform linkTransformInWorldSpace;
 	linkTransformInWorldSpace.setIdentity();
@@ -792,6 +791,7 @@ void URDF2BulletMultiBody(
 
 
 	bool recursive = (flags & CUF_MAINTAIN_LINK_ORDER)==0;
+	
 	if (recursive)
 	{
 		URDF2BulletMultiBodyInternal(u2b, creation, cache, urdfLinkIndex, rootTransformInWorldSpace, createMultiBody, pathPrefix, flags, cachedLinkGraphicsShapes, &cachedLinkGraphicsShapesOut, recursive);

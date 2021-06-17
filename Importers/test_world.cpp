@@ -1,6 +1,7 @@
 #include "world.h"
 #include "URDF2btMultiBody.h"
 #include "robot.h"
+#include <iostream>
 
 int main() {
 
@@ -59,7 +60,7 @@ int main() {
         tr.setRotation(orn);
         box_collision_obj->setWorldTransform(tr);
 
-        w.addCollisionObject(box_collision_obj);
+        // w.addCollisionObject(box_collision_obj);
     }
 
     // w.importURDF("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf");
@@ -68,11 +69,17 @@ int main() {
     
     w.updateCollisionObjectGraphics();
 
-    Robot kuka_robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf", w.m_guihelper, 10);
+    // Robot kuka_robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf", w.m_guihelper, 10);
+    Robot kuka_robot("/home/xianyi/projects/ddhand_abb_120/ddhand_irb120_3_58.urdf", w.m_guihelper, 10);
 
-    kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 0, 0)));
+    kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 2, 0)));
 
-    double p[] = {0,0,0,0,0,0,0};
+    std::cout << "Num link: " << kuka_robot.mb->getNumLinks() << std::endl;
+
+    double p[33];
+    for (int k=0;k<33;k++){
+        p[k]=0;
+    }
 
     // try render
     do
@@ -95,9 +102,9 @@ int main() {
         // }
 
         {
-            for (int i = 0; i < kuka_robot.mb->getNumLinks()+1; i++){
-                p[i] = 0.002*float((frameCount)%600);
-            }
+            // for (int i = 0; i < kuka_robot.mb->getNumLinks()+1; i++){
+            //     p[i] = 0.002*float((frameCount)%600);
+            // }
 
             kuka_robot.setJointPositions(p);
             kuka_robot.updateGraphics(w.m_app);
