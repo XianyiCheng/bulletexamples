@@ -289,6 +289,9 @@ btTransform URDF2BulletMultiBodyInternal(
 		else
 		{
 			graphicsIndex = u2b.convertLinkVisualShapes(urdfLinkIndex, pathPrefix, localInertialFrame);
+			if (graphicsIndex == -1){
+				printf("Failed to conver visual shapes %d. Check if the mesh file is too large. \n", urdfLinkIndex);
+			}
 			if (cachedLinkGraphicsShapesOut)
 			{
 				cachedLinkGraphicsShapesOut->m_cachedUrdfLinkVisualShapeIndices.push_back(graphicsIndex);

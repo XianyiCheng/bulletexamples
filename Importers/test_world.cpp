@@ -74,7 +74,7 @@ int main() {
 
     kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 2, 0)));
 
-    std::cout << "Num link: " << kuka_robot.mb->getNumLinks() << std::endl;
+    std::cout << "Num link: " << kuka_robot.mb->getNumDofs() << std::endl;
 
     double p[33];
     for (int k=0;k<33;k++){

@@ -1,0 +1,1 @@
+Make sure your mesh files are small enough!!! Otherwise the bullet won't load it and gives no warning. 

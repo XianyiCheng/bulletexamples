@@ -4,7 +4,8 @@
 #include "BulletCollision/CollisionShapes/btConvexHullShape.h"
 
 #include "Importers/ImportURDFDemo/BulletUrdfImporter.h"
-// #include "Importers/ImportURDFDemo/URDF2Bullet.h"
+// #include "BulletUrdfImporter.h"
+#include "Importers/ImportURDFDemo/URDF2Bullet.h"
 #include "Importers/ImportURDFDemo/MyMultiBodyCreator.h"
 #include "Importers/ImportURDFDemo/ImportURDFSetup.h"
 
@@ -47,7 +48,7 @@
 #endif
 
 #include "BulletDynamics/Featherstone/btMultiBody.h"
-
+#include <iostream>
 
 void Robot::importURDF(const char* fileName, OpenGLGuiHelper* m_guihelper, double scaling){
     
@@ -57,6 +58,8 @@ void Robot::importURDF(const char* fileName, OpenGLGuiHelper* m_guihelper, doubl
 	BulletURDFImporter u2b(m_guihelper, 0, 0, scaling, flags);
 
 	bool loadOk = u2b.loadURDF(fileName);
+    
+    // u2b.CheckLinks();
 
 	if (loadOk)
 	{
@@ -65,8 +68,9 @@ void Robot::importURDF(const char* fileName, OpenGLGuiHelper* m_guihelper, doubl
 
 		{
 			MyMultiBodyCreator creation(m_guihelper);
-
+            // u2b.CheckVisualShapes();
 			URDF2BulletMultiBody(u2b, creation, identityTrans, 1, u2b.getPathPrefix());
+            // u2b.CheckLinks();
 			this->mb = creation.getBulletMultiBody();
 		}
     }
@@ -94,7 +98,11 @@ void Robot::updateGraphics(SimpleOpenGLApp* m_app){
 
         for (int i = 0; i < this->mb->getNumLinks(); i++){
             btTransform tr = this->link_transforms[i];
+            btTransform ttr;
+            bool isvisualinstance = m_app->m_renderer->readSingleInstanceTransformToCPU(ttr.getOrigin(), ttr.getRotation(), this->mb->getLinkCollider(i)->getUserIndex());
+            // std::cout << "Link " << i << ": " << isvisualinstance << std::endl;
             m_app->m_renderer->writeSingleInstanceTransformToCPU(tr.getOrigin(), tr.getRotation(), this->mb->getLinkCollider(i)->getUserIndex());
+
         }
 
         m_app->m_renderer->writeTransforms();
