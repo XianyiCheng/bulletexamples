@@ -9,11 +9,21 @@ int main() {
 
     w.initializeGraphics();
 
-    Robot kuka_robot("/home/xianyi/projects/ddhand_abb_120/ddhand_irb120_3_58.urdf", w.m_guihelper, 10);
+    // Robot robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/kuka_with_gripper2.sdf", w.m_guihelper, 10);
+    Robot robot("/home/xianyi/projects/ddhand_abb_120/ddhand_irb120_3_58.urdf", w.m_guihelper, 10);
+    // Robot robot("/home/xianyi/projects/ddhand_abb_120/ddhand_irb120.sdf", w.m_guihelper, 10);
 
-    kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 2, 0)));
+    robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 2, 0)));
 
-    std::cout << "Num link: " << kuka_robot.mb->getNumLinks() << std::endl;
+    std::cout << "Num link: " << robot.mb->getNumLinks() << std::endl;
+
+    for (int i = 0; i < robot.mb->getNumLinks(); i++){
+        
+        // std::string linkname(robot.mb->getLink(i).m_linkName);
+        std::cout <<"Link " << i << ": joint type " << robot.mb->getLink(i).m_jointType << std::endl;
+        // std::cout <<"Link " << i << ": joint type " << robot.mb->getLink(i).m_jointName << std::endl;
+        // joint type: eRevolute = 0, ePrismatic = 1, eSpherical = 2, ePlanar = 3, eFixed = 4, eInvalid
+    }
 
     double p[33];
     for (int k=0;k<33;k++){
@@ -41,12 +51,22 @@ int main() {
         // }
 
         {
-            // for (int i = 0; i < kuka_robot.mb->getNumLinks()+1; i++){
-            //     p[i] = 0.002*float((frameCount)%600);
+            // for (int i = 0; i < robot.mb->getNumLinks(); i++){
+            // for (int i = 0; i < 6; i++){
+            //     p[i] = 0.002*float((frameCount)%1000);
             // }
 
-            kuka_robot.setJointPositions(p);
-            kuka_robot.updateGraphics(w.m_app);
+            // p[13] = 0.5-0.002*float((frameCount)%1000);
+            // p[20] = 0.5-0.002*float((frameCount)%1000);
+            // p[21] = 0.5-0.002*float((frameCount)%1000);
+
+            p[14] = 0.5-0.002*float((frameCount)%1000);
+            p[15] = 0.5-0.002*float((frameCount)%1000);
+            p[18] = 0.5-0.002*float((frameCount)%1000);
+            p[19] = 0.5-0.002*float((frameCount)%1000);
+
+            robot.setJointPositions(p);
+            robot.updateGraphics(w.m_app);
         }
 
 

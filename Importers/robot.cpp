@@ -73,12 +73,75 @@ void Robot::importURDF(const char* fileName, OpenGLGuiHelper* m_guihelper, doubl
             // u2b.CheckLinks();
 			this->mb = creation.getBulletMultiBody();
 		}
+
+        for (int i = 0; i < this->mb->getNumLinks(); i++){
+            
+            std::cout << "Link " << i << ": " << u2b.getLinkName(i) << std::endl;
+        }
+
+    }
+
+}
+
+void Robot::importSDF(const char* fileName, OpenGLGuiHelper* m_guihelper, double scaling){
+    
+    int flags = 0;
+
+    // graphics object already added to the gui, and register with collision object with userIndex
+	BulletURDFImporter u2b(m_guihelper, 0, 0, scaling, flags);
+
+	bool loadOk = u2b.loadSDF(fileName);
+    
+    // u2b.CheckLinks();
+
+	if (loadOk)
+	{
+		btTransform identityTrans;
+		identityTrans.setIdentity();
+
+		btTransform rootTrans;
+		rootTrans.setIdentity();
+        int NumModels = u2b.getNumModels();
+		for (int m = 0; m < NumModels; m++)
+		{
+			u2b.activateModel(m);
+
+			btMultiBody* mb = 0;
+
+			MyMultiBodyCreator creation(m_guihelper);
+
+			u2b.getRootTransformInWorld(rootTrans);
+			URDF2BulletMultiBody(u2b, creation, rootTrans, 1, u2b.getPathPrefix(), CUF_USE_SDF);
+			mb = creation.getBulletMultiBody();
+
+            for (int i = 0; i < mb->getNumLinks(); i++){
+                
+                std::cout << "Link " << i << "name " << u2b.getLinkName(i) << std::endl;
+            }
+
+			if (mb)
+			{
+				std::string* name = new std::string(u2b.getLinkName(u2b.getRootLinkIndex()));
+				mb->setBaseName(name->c_str());
+				//create motors for each btMultiBody joint
+				int numLinks = mb->getNumLinks();
+                std::cout << name->c_str() << ", NumLinks: " << numLinks << std::endl;
+            }
+
+            this->mb = mb;
+        }
     }
 
 }
 
 Robot::Robot(const char* fileName, OpenGLGuiHelper* m_guihelper, double scaling){
-    this->importURDF(fileName, m_guihelper, scaling);
+    std::string filestr(fileName);
+    if (filestr.compare(filestr.length()-3,3,"sdf") == 0){
+        this->importSDF(fileName, m_guihelper, scaling);
+    } else {
+        this->importURDF(fileName, m_guihelper, scaling);
+    }
+    
 }
 
 void Robot::updateGraphics(SimpleOpenGLApp* m_app){
@@ -99,8 +162,9 @@ void Robot::updateGraphics(SimpleOpenGLApp* m_app){
         for (int i = 0; i < this->mb->getNumLinks(); i++){
             btTransform tr = this->link_transforms[i];
             btTransform ttr;
-            bool isvisualinstance = m_app->m_renderer->readSingleInstanceTransformToCPU(ttr.getOrigin(), ttr.getRotation(), this->mb->getLinkCollider(i)->getUserIndex());
+            // bool isvisualinstance = m_app->m_renderer->readSingleInstanceTransformToCPU(ttr.getOrigin(), ttr.getRotation(), this->mb->getLinkCollider(i)->getUserIndex());
             // std::cout << "Link " << i << ": " << isvisualinstance << std::endl;
+
             m_app->m_renderer->writeSingleInstanceTransformToCPU(tr.getOrigin(), tr.getRotation(), this->mb->getLinkCollider(i)->getUserIndex());
 
         }

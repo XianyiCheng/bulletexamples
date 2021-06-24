@@ -39,6 +39,7 @@ public:
     btAlignedObjectArray<btTransform> link_transforms;
 
     void importURDF(const char* fileName, OpenGLGuiHelper* m_guihelper, double scaling);
+    void importSDF(const char* fileName, OpenGLGuiHelper* m_guihelper, double scaling);
 
     Robot();
 

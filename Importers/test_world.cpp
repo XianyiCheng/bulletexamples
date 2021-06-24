@@ -70,7 +70,7 @@ int main() {
     w.updateCollisionObjectGraphics();
 
     // Robot kuka_robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/model.urdf", w.m_guihelper, 10);
-    Robot kuka_robot("/home/xianyi/projects/ddhand_abb_120/ddhand_irb120_3_58.urdf", w.m_guihelper, 10);
+    Robot kuka_robot("/home/xianyi/libraries/bullet3/data/kuka_iiwa/kuka_with_gripper2.sdf", w.m_guihelper, 10);
 
     kuka_robot.setBaseTransform(btTransform(btQuaternion(0.7071, 0, 0, -0.7071), btVector3(0, 2, 0)));
 
@@ -111,7 +111,7 @@ int main() {
         }
 
 
-        w.updateAllColliderGraphics();
+        // w.updateAllColliderGraphics();
 
         // draw all contacts
         w.drawAllContacts();
